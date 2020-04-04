@@ -1,0 +1,8 @@
+C:\Users\gusta\Documents\GitHub\folderizer-lib\FolderizerLib\bin\Release\netcoreapp3.1\FolderizerLib.deps.json
+C:\Users\gusta\Documents\GitHub\folderizer-lib\FolderizerLib\bin\Release\netcoreapp3.1\FolderizerLib.dll
+C:\Users\gusta\Documents\GitHub\folderizer-lib\FolderizerLib\bin\Release\netcoreapp3.1\FolderizerLib.pdb
+C:\Users\gusta\Documents\GitHub\folderizer-lib\FolderizerLib\obj\Release\netcoreapp3.1\FolderizerLib.AssemblyInfoInputs.cache
+C:\Users\gusta\Documents\GitHub\folderizer-lib\FolderizerLib\obj\Release\netcoreapp3.1\FolderizerLib.AssemblyInfo.cs
+C:\Users\gusta\Documents\GitHub\folderizer-lib\FolderizerLib\obj\Release\netcoreapp3.1\FolderizerLib.dll
+C:\Users\gusta\Documents\GitHub\folderizer-lib\FolderizerLib\obj\Release\netcoreapp3.1\FolderizerLib.pdb
+C:\Users\gusta\Documents\GitHub\folderizer-lib\FolderizerLib\obj\Release\netcoreapp3.1\FolderizerLib.csprojAssemblyReference.cache

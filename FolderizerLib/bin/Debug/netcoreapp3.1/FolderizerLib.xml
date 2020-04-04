@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FolderizerLib</name>
+    </assembly>
+    <members>
+        <member name="T:FolderizerLib.Audio.AudioTag">
+            <summary>
+            Tags commonly present in audio files.
+            </summary>
+        </member>
+        <member name="F:FolderizerLib.Audio.AudioTag.Artist">
+            <summary>
+            Represents the artist tag.
+            </summary>
+        </member>
+        <member name="F:FolderizerLib.Audio.AudioTag.Genre">
+            <summary>
+            Represents the genre tag.
+            </summary>
+        </member>
+        <member name="F:FolderizerLib.Audio.AudioTag.Year">
+            <summary>
+            Represents the year tag.
+            </summary>
+        </member>
+        <member name="F:FolderizerLib.Audio.AudioTag.Album">
+            <summary>
+            Represents the album tag.
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.Audio.AudioTagSequenceValidator.ValidateSequence(System.Collections.Generic.List{FolderizerLib.Audio.AudioTag})">
+            <summary>
+            This method receives a list populated with <see cref="T:FolderizerLib.Audio.AudioTag"/> and evaluates whether it is or not a valid sequence.
+            </summary>
+            <param name="tagSequence"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FolderizerLib.Audio.AudioTagSequenceValidator.SequenceContainsAlbumTagNotInLastPosition(System.Collections.Generic.List{FolderizerLib.Audio.AudioTag})">
+            <summary>
+            Method used in <see cref="M:FolderizerLib.Audio.AudioTagSequenceValidator.ValidateSequence(System.Collections.Generic.List{FolderizerLib.Audio.AudioTag})"/>
+            </summary>
+            <param name="tagSequence"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FolderizerLib.Audio.AudioTagSequenceValidator.SequenceContainsDuplicateTags(System.Collections.Generic.List{FolderizerLib.Audio.AudioTag})">
+            <summary>
+            Method used in <see cref="M:FolderizerLib.Audio.AudioTagSequenceValidator.ValidateSequence(System.Collections.Generic.List{FolderizerLib.Audio.AudioTag})"/>
+            </summary>
+            <param name="tagSequence"></param>
+            <returns></returns>
+        </member>
+        <member name="T:FolderizerLib.Audio.FolderizerAudio">
+            <summary>
+            This class provides means to dynamically organize audio files from a directory into a given folder structure.
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.Audio.FolderizerAudio.SetOrganizationSequence(FolderizerLib.Audio.AudioTag[])">
+            <summary>
+            <para>Sets the desired organization structure which will be used to organize the audio files of the given directory.</para>
+            <para>The exception <see cref="T:FolderizerLib.InvalidTagSequenceException" /> will be thrown if:</para>
+            <list type="bullet">
+            <item><description>When used, <see cref="F:FolderizerLib.Audio.AudioTag.Album"/> is not placed at the last position of the organization sequence;</description></item>
+            <item><description>There are duplicates <see cref="T:FolderizerLib.Audio.AudioTag"/>.</description></item>
+            </list>
+            <example>
+            Correct usage example:
+            <code>
+            AudioFolderizer.SetOrganizationSequence(AudioTags.Year, AudioTags.Artist, AudioTags.Album);
+            </code>
+            </example>
+            
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.Audio.FolderizerAudio.Execute">
+            <inheritdoc/>
+        </member>
+        <member name="M:FolderizerLib.Audio.FolderizerAudio.GenerateTreeView">
+            <inheritdoc/>
+        </member>
+        <member name="P:FolderizerLib.Audio.FolderizerAudio.TagsSequence">
+            <summary>
+            Provides access to the organization sequence defined in <see cref="M:FolderizerLib.Audio.FolderizerAudio.SetOrganizationSequence(FolderizerLib.Audio.AudioTag[])"/>
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.Audio.FolderizerAudio.GenerateMountedPath(System.String,System.String)">
+            <summary>
+            Generates the final location for the given <paramref name="filePath"/> according to the sequence set in <see cref="P:FolderizerLib.Audio.FolderizerAudio.TagsSequence"/>.
+            </summary>
+            <param name="filePath"></param>
+            <param name="mountingPath"></param>
+        </member>
+        <member name="M:FolderizerLib.Audio.FolderizerAudio.GetTagValue(FolderizerLib.Audio.AudioTag,System.String)">
+            <summary>
+            Gets the value of the file's given tag value.
+            </summary>
+            <param name="currentFilePath"></param>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FolderizerLib.Audio.FolderizerAudio.NotAudioFile(System.String)">
+             <summary>
+            Evaluates if the file is an audio file whose format is supported by <see cref="T:FolderizerLib.Audio.FolderizerAudio"/>.
+             </summary>
+             <param name="filePath"></param>
+             <returns></returns>
+        </member>
+        <member name="M:FolderizerLib.Audio.FolderizerAudio.SupportedAudioFormats.Include(System.String)">
+            <summary>
+            Verifies if the given format is supported as audio file.
+            </summary>
+        </member>
+        <member name="T:FolderizerLib.Audio.IAudioOrganizer">
+            <summary>
+            Provides an interface for <see cref="T:FolderizerLib.FileOrganizer"/> implementations that handle audio files, such as
+            <see cref="T:FolderizerLib.Audio.FolderizerAudio"/>.
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.Audio.IAudioOrganizer.SetOrganizationSequence(FolderizerLib.Audio.AudioTag[])">
+            <summary>
+            Sets the desired directory structure by passing the tags to be considered during organization.
+            </summary>
+            <param name="tags"></param>
+        </member>
+        <member name="T:FolderizerLib.Error">
+            <summary>
+            An instance of this class encapsulates information about errors occurred during the execution of the files organization.
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.Error.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:FolderizerLib.Error"/>. 
+            </summary>
+        </member>
+        <member name="P:FolderizerLib.Error.FileName">
+            <summary>
+            Represents the name of file file, without the path.
+            </summary>
+        </member>
+        <member name="P:FolderizerLib.Error.FilePath">
+            <summary>
+            Represents the complete file path.
+            </summary>
+        </member>
+        <member name="P:FolderizerLib.Error.ExceptionMessage">
+            <summary>
+            Contains a string with the message of the thrown exception.
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.ExecutionResult.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FolderizerLib.ExecutionResult"/> class.
+            </summary>
+        </member>
+        <member name="P:FolderizerLib.ExecutionResult.Errors">
+            <summary>
+            Returns a collection of logged errors occurred while organizing the directory.
+            <para>Each <see cref="T:FolderizerLib.Error"/> encapsulates information like <see cref="P:FolderizerLib.Error.FileName"/>,  <see cref="P:FolderizerLib.Error.FilePath"/>, <see cref="P:FolderizerLib.Error.ExceptionMessage"/></para>
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.ExecutionResult.AppendError(FolderizerLib.Error)">
+            <summary>
+            Adds an <see cref="T:FolderizerLib.Error"/> to a collection of errors stored in <see cref="T:FolderizerLib.ExecutionResult"/> instances, which can be accessed through <see cref="P:FolderizerLib.ExecutionResult.Errors"/> property.
+            </summary>
+            <param name="error"></param>
+        </member>
+        <member name="T:FolderizerLib.FileOrganizer">
+            <summary>
+            <para>This is an abstract class.</para>
+            <para>Take a look at: <see cref="T:FolderizerLib.Audio.FolderizerAudio"/></para>
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.FileOrganizer.#ctor(System.String)">
+            <summary>
+            With this constructor, mounting path is set to be the same as base path.
+            </summary>
+            <param name="basePath"></param>
+        </member>
+        <member name="P:FolderizerLib.FileOrganizer.BasePath">
+            <summary>
+            Represents the root directory in which the files to be organized are located.
+            </summary>
+        </member>
+        <member name="P:FolderizerLib.FileOrganizer.MountingPath">
+            <summary>
+            <para>Represents the directory in which the organized files along with the desired folder structure will be put.</para>
+            <para>When not set, mounting path will be the same as base path.</para>
+            </summary>
+        </member>
+        <member name="P:FolderizerLib.FileOrganizer.OperationMethod">
+            <summary>
+            This property stores either <see cref="F:FolderizerLib.OperationMethod.Copy"/> or <see cref="F:FolderizerLib.OperationMethod.Move"/>, which defines how the files will be handled.
+            </summary>
+        </member>
+        <member name="P:FolderizerLib.FileOrganizer.MaxSearchDepth">
+            <summary>
+            This property defines the depth of search in subdirectories. Maximum defined at <see cref="F:FolderizerLib.FileOrganizer.SearchDepthLimit"/>
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.FileOrganizer.Execute">
+            <summary>
+            Organizes the directory generating the desired directory structure.
+            </summary>
+        </member>
+        <member name="M:FolderizerLib.FileOrganizer.GenerateTreeView">
+            <summary>
+            Generates a JSON object mapped with the mounted folder structure.
+            </summary>
+        </member>
+    </members>
+</doc>
