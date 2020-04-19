@@ -10,9 +10,10 @@ namespace FolderizerLib
         /// <summary>
         /// Initializes a new instance of <see cref="Error"/>. 
         /// </summary>
-        public Error()
+        public Error(string filePath, string exceptionMessage)
         {
-
+            FilePath = filePath;
+            ExceptionMessage = exceptionMessage;
         }
 
         /// <summary>

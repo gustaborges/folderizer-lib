@@ -6,35 +6,24 @@ using System.Text;
 
 namespace FolderizerLib.Audio
 {
-    public partial class FolderizerAudio : Folderizer, IAudioOrganizer
+    /// <summary>
+    /// This class provides means to dynamically organize a directory's audio files according to a desired folder structure.
+    /// </summary>
+    public partial class FolderizerAudio : AudioOrganizer
     {
-        #region Constructors
+        /// <inheritdoc/>
+        public FolderizerAudio() { }
+        /// <inheritdoc/>
+        public FolderizerAudio(string basePath) : base(basePath) { }
+        /// <inheritdoc/>
+        public FolderizerAudio(string basePath, string mountingPath) : base(basePath, mountingPath) { }
+        /// <inheritdoc/>
+        public FolderizerAudio(string basePath, string mountingPath, uint searchDepth) : base(basePath, mountingPath, searchDepth) { }
+        /// <inheritdoc/>
+        public FolderizerAudio(string basePath, string mountingPath, OperationMethod operationMethod) : base(basePath, mountingPath, operationMethod) { }
+        /// <inheritdoc/>
+        public FolderizerAudio(string basePath, string mountingPath, uint searchDepth, OperationMethod operationMethod) : base(basePath, mountingPath, searchDepth, operationMethod) { }
 
-        public FolderizerAudio() : base()
-        {
-        }
-
-        public FolderizerAudio(string basePath) : base(basePath)
-        {
-        }
-
-        public FolderizerAudio(string basePath, string mountingPath) : base(basePath, mountingPath)
-        {
-        }
-
-        public FolderizerAudio(string basePath, string mountingPath, uint searchDepth) : base(basePath, mountingPath, searchDepth)
-        {
-        }
-
-        public FolderizerAudio(string basePath, string mountingPath, OperationMethod operationMethod) : base(basePath, mountingPath, operationMethod)
-        {
-        }
-
-        public FolderizerAudio(string basePath, string mountingPath, uint searchDepth, OperationMethod operationMethod) : base(basePath, mountingPath, searchDepth, operationMethod)
-        {
-        }
-
-        #endregion
 
         #region Methods
 
@@ -42,25 +31,25 @@ namespace FolderizerLib.Audio
         /// <para>Sets the desired organization structure which will be used to organize the audio files of the given directory.</para>
         /// <para>The exception <see cref="InvalidTagSequenceException" /> will be thrown if:</para>
         /// <list type="bullet">
-        /// <item><description>When used, <see cref="AudioTag.Album"/> is not placed at the last position of the organization sequence;</description></item>
-        /// <item><description>There are duplicates <see cref="AudioTag"/>.</description></item>
+        /// <item><description>If <see cref="AudioTag.Album"/> is present, but not in the last position of the organization sequence;</description></item>
+        /// <item><description>If there are duplicates <see cref="AudioTag"/> values.</description></item>
         /// </list>
         /// <example>
-        /// Correct usage example:
+        /// Usage example:
         /// <code>
-        /// AudioFolderizer.SetOrganizationSequence(AudioTags.Year, AudioTags.Artist, AudioTags.Album);
+        /// SetDesiredDirectoryStructure(AudioTag.Artist, AudioTag.Year, AudioTag.Album)
         /// </code>
         /// </example>
-        /// 
         /// </summary>
-        public void SetOrganizationSequence(params AudioTag[] tags)
+        public override void SetDesiredDirectoryStructure(params AudioTag[] tags)
         {
             TagsSequence = tags.ToList();
         }
 
         /// <inheritdoc/>
-        public override void Execute()
+        public override ExecutionResult Organize()
         {
+            var executionResult = new ExecutionResult();
             var files = Directory.EnumerateFiles(BasePath);
             StringBuilder finalFilePath = new StringBuilder();
 
@@ -69,62 +58,72 @@ namespace FolderizerLib.Audio
                 if (NotAudioFile(file))
                     continue;
 
-                // Clears StringBuilder
                 finalFilePath.Clear();
-                
-                // Generates the new file location based on the tags informed.
-                finalFilePath.Append(GenerateMountedPath(file, MountingPath));
-                
-                // Creates the new file location.
+
+                // Generates the new file location based on the desired folder structure of the directory
+                finalFilePath.Append(GenerateFinalLocation(filePath: file, MountingPath));
+
+                // Creates the folder structure
                 Directory.CreateDirectory(finalFilePath.ToString());
-                
+
                 // Appends the name of the file to the new path
                 finalFilePath.Append($"\\{Path.GetFileName(file)}");
 
                 // Effects move / copy operation
-                if (OperationMethod == OperationMethod.Move)
-                    File.Move(sourceFileName: file, destFileName: finalFilePath.ToString());
-                else
-                    File.Copy(sourceFileName: file, destFileName: finalFilePath.ToString());
+                try
+                {
+                    if (OperationMethod == OperationMethod.Move)
+                        File.Move(sourceFileName: file, destFileName: finalFilePath.ToString());
+                    else
+                        File.Copy(sourceFileName: file, destFileName: finalFilePath.ToString());
+                }
+                catch(Exception ex)
+                {
+                    executionResult.LogException(new Error(file, ex.Message));
+                }
             }
+            return executionResult;
         }
 
-
-
         /// <inheritdoc/>
-        public override void GenerateTreeView()
+        public override string GenerateTreeView()
         {
             throw new NotImplementedException();
         }
+
         #endregion
     }
 
-    /// <summary>
-    /// This class provides means to dynamically organize audio files from a directory into a given folder structure.
-    /// </summary>
     public partial class FolderizerAudio
     {
         private List<AudioTag> _tagsSequence;
+        private static readonly string _supportedAudioFormats = ".aa|.aax|.aac|.aiff|.ape|.dsf|.flac|.m4a|.m4b|.m4p|.mp3|.mpc|.mpp|.ogg|.oga|.wav|.wma|.wv|.webm";
+
 
         #region Properties
 
         /// <summary>
-        /// Provides access to the organization sequence defined in <see cref="SetOrganizationSequence"/>
+        /// A sequence of tags whose order represents the desired directory structure. The value can be set by <see cref="SetDesiredDirectoryStructure"/>
         /// </summary>
         public List<AudioTag> TagsSequence
         {
-            get
-            {
-                return _tagsSequence;
-            }
+            get => _tagsSequence;
+
             private set
             {
-                _tagsSequence = AudioTagSequenceValidator.ValidateSequence(value);
+                try
+                {
+                    new AudioTagSequenceValidator().Validate(value);
+                    _tagsSequence = value;
+                }
+                catch(InvalidTagSequenceException exception)
+                {
+                    throw exception;
+                }
             }
         }
 
         #endregion
-
 
         #region Methods
 
@@ -133,24 +132,24 @@ namespace FolderizerLib.Audio
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="mountingPath"></param>
-        private string GenerateMountedPath(string filePath, string mountingPath)
+        private string GenerateFinalLocation(string filePath, string mountingPath)
         {
             string mountedPath = mountingPath;
 
             foreach (AudioTag tag in TagsSequence)
             {
-                mountedPath += $"\\{ GetTagValue(tag, filePath) }";
+                mountedPath += $"\\{ GetTagValueFromFile(tag, filePath) }";
             }
             return mountedPath;
         }
 
         /// <summary>
-        /// Gets the value of the file's given tag value.
+        /// Returns the file's correspondent meta value.
         /// </summary>
         /// <param name="currentFilePath"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        private string GetTagValue(AudioTag tag, string currentFilePath)
+        private string GetTagValueFromFile(AudioTag tag, string currentFilePath)
         {
             var file = TagLib.File.Create(currentFilePath);
             switch (tag)
@@ -164,28 +163,15 @@ namespace FolderizerLib.Audio
         }
 
         /// <summary>
-        ///Evaluates if the file is an audio file whose format is supported by <see cref="FolderizerAudio"/>.
+        ///Evaluates if the path leads to an audio file.
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
         private bool NotAudioFile(string filePath)
         {
-            return !SupportedAudioFormats.Include(format: Path.GetExtension(filePath));
+            return !_supportedAudioFormats.Contains(Path.GetExtension(filePath));
         }
 
         #endregion
-
-        private static class SupportedAudioFormats
-        {
-            private static readonly string supportedFormats = ".aa|.aax|.aac|.aiff|.ape|.dsf|.flac|.m4a|.m4b|.m4p|.mp3|.mpc|.mpp|.ogg|.oga|.wav|.wma|.wv|.webm";
-
-            /// <summary>
-            /// Verifies if the given format is supported as audio file.
-            /// </summary>
-            public static bool Include(string format)
-            {
-                return supportedFormats.Contains(format);
-            }
-        }
     }
 }
