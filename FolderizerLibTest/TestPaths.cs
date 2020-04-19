@@ -24,7 +24,7 @@ namespace FolderizerLibTest
 
         /* There's no need to modify the following paths */
         private static string _validBasePath   = Path.Combine(_testFolderPath, "Folderizer-Valid-Base-Path");
-        private static string _validmountingPath = Path.Combine(_testFolderPath, "Folderizer-Valid-Mounting-Path");
+        private static string _validMountingPath = Path.Combine(_testFolderPath, "Folderizer-Valid-Mounting-Path");
         private static string _inexistentDirectoryPath = Path.Combine(_testFolderPath, "Invalid-Base-Path");
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace FolderizerLibTest
         {
             get
             {
-                Directory.CreateDirectory(_validmountingPath);
-                return _validmountingPath;
+                Directory.CreateDirectory(_validMountingPath);
+                return _validMountingPath;
             }
         }
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace FolderizerLib
 {
@@ -31,7 +29,7 @@ namespace FolderizerLib
         /// Adds an <see cref="Error"/> to a collection of errors stored in <see cref="ExecutionResult"/> instances, which can be accessed through <see cref="ExecutionResult.Errors"/> property.
         /// </summary>
         /// <param name="error"></param>
-        public void AppendError(Error error)
+        public void LogException(Error error)
         {
             _errors.Add(error);
         }

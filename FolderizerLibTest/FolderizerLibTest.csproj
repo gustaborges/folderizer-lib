@@ -16,8 +16,4 @@
     <ProjectReference Include="..\FolderizerLib\FolderizerLib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="IntegrationTests\" />
-  </ItemGroup>
-
 </Project>
